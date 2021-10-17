@@ -15,6 +15,8 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String name;
+
     private Double price;
 
     private Double unit;
@@ -28,4 +30,6 @@ public class Item {
 
     @Enumerated(EnumType.STRING)
     private PeriodType periodType;
+
+    private LocalDate expectedDepletionDate;
 }

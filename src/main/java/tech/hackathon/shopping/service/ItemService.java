@@ -1,11 +1,18 @@
 package tech.hackathon.shopping.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tech.hackathon.shopping.domain.Item;
 import tech.hackathon.shopping.repository.ItemRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 public class ItemService {
 
@@ -19,6 +26,9 @@ public class ItemService {
         item.setLastBought(LocalDate.now());
         LocalDate completionDate=calculateDepletionDate(item);
         item.setExpectedDepletionDate(completionDate);
+
+        log.debug("About to save item : {}",item);
+
         return itemRepository.save(item);
     }
 
@@ -40,5 +50,34 @@ public class ItemService {
                 break;
         }
         return completionDate;
+    }
+
+    public List<Item> findAll() {
+
+        log.info("About to find all items");
+
+        Iterable<Item> itemIterable = itemRepository.findAll();
+
+        log.info("Items : {}",itemIterable);
+
+        List<Item> items = StreamSupport.stream(itemIterable.spliterator(),false).collect(Collectors.toList());
+
+        return items;
+    }
+
+    public Item update(Item item) {
+
+        if(item.getId()==null){
+            save(item);
+        }
+
+        return itemRepository.save(item);
+    }
+
+    public Item findOneById(Integer id){
+
+        Item item = itemRepository.findById(id).orElseThrow();
+
+        return item;
     }
 }
